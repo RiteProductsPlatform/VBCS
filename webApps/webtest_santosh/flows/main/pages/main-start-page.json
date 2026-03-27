@@ -1,0 +1,38 @@
+{
+  "title": "main",
+  "description": "",
+  "variables": {
+    "username": {
+      "type": "string"
+    }
+  },
+  "metadata": {},
+  "types": {},
+  "eventListeners": {
+    "buttonAction": {
+      "chains": [
+        {
+          "chain": "ButtonActionChain",
+          "parameters": {
+            "event": "{{$event}}",
+            "originalEvent": "{{$event.detail.originalEvent}}"
+          }
+        }
+      ]
+    }
+  },
+  "imports": {
+    "components": {
+      "oj-button": {
+        "path": "ojs/ojbutton"
+      },
+      "oj-input-password": {
+        "path": "ojs/ojinputtext"
+      },
+      "oj-input-text": {
+        "path": "ojs/ojinputtext"
+      }
+
+   }
+  }
+}

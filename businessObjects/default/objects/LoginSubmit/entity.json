@@ -1,0 +1,76 @@
+{
+    "fields": [
+        {
+            "type": "number",
+            "name": "id",
+            "internal": false,
+            "key": true,
+            "oid": "22b1250b-24d6-49e0-9272-4ccb9906f727",
+            "required": true,
+            "unique": true,
+            "displayLabel": "Id"
+        },
+        {
+            "type": "datetime",
+            "name": "creationDate",
+            "internal": false,
+            "oid": "04763b5a-b94a-4d10-a7d3-e2028cef8727",
+            "required": true,
+            "displayLabel": "Created",
+            "historyType": "timeCreated"
+        },
+        {
+            "type": "datetime",
+            "name": "lastUpdateDate",
+            "internal": false,
+            "oid": "534cb88a-717c-4a0c-84f9-82f60a78feef",
+            "required": true,
+            "displayLabel": "Last Updated",
+            "historyType": "timeUpdated"
+        },
+        {
+            "type": "string",
+            "name": "createdBy",
+            "internal": false,
+            "oid": "b6f0a9bd-d5cf-4b66-a464-1db62c0ce039",
+            "required": true,
+            "displayLabel": "Created By",
+            "historyType": "createdBy"
+        },
+        {
+            "type": "string",
+            "name": "lastUpdatedBy",
+            "internal": false,
+            "oid": "5d000d61-bd2c-4306-a19f-14c80e917d2a",
+            "required": true,
+            "displayLabel": "Last Updated By",
+            "historyType": "updatedBy"
+        },
+        {
+            "type": "number",
+            "name": "versionNumber",
+            "internal": false,
+            "oid": "ec3e83e9-5479-4ceb-aac3-6b2301c8e936",
+            "required": true,
+            "displayLabel": "Version Number",
+            "historyType": "versionNumber"
+        },
+        {
+            "type": "string",
+            "name": "username",
+            "oid": "f4b8d15d-ba8d-4b21-9e89-7939ec48f036",
+            "required": true,
+            "displayLabel": "Username"
+        },
+        {
+            "type": "string",
+            "name": "password",
+            "oid": "ed4a3ce1-1bde-4ac3-ae63-fb49e926c9fc",
+            "required": true,
+            "displayLabel": "Password"
+        }
+    ],
+    "name": "LoginSubmit",
+    "oid": "4fbe4e73-7762-4a20-a06a-815d8097e1fd",
+    "displayLabel": "Login Submit"
+}
