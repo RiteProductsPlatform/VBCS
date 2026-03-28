@@ -1,0 +1,41 @@
+<oj-vb-fragment id="page-header" bridge="[[vbBridge]]" name="page-header">
+  <oj-vb-fragment-param name="title" value="main"></oj-vb-fragment-param>
+  <template slot="actions">
+  </template>
+</oj-vb-fragment>
+<div class="oj-flex oj-sm-justify-content-center oj-sm-align-items-center" style="min-height: 80vh; background-color: var(--oj-core-bg-neutral-1);">
+  <div class="oj-flex-item oj-sm-12 oj-md-6 oj-lg-4 oj-bg-neutral-0 oj-sm-padding-6x oj-sm-margin-4x" style="border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);">
+    
+    <div class="oj-flex oj-sm-flex-direction-column oj-sm-align-items-center oj-sm-margin-6x-bottom">
+      <div class="oj-flex oj-sm-justify-content-center oj-sm-align-items-center oj-sm-margin-4x-bottom" style="width: 64px; height: 64px; border-radius: 50%; background-color: var(--oj-core-color-warning-1);">
+        <span class="oj-ux-ico-box oj-icon-color-warning" style="font-size: 2rem;"></span>
+      </div>
+      <h1 class="oj-typography-heading-xl oj-typography-bold oj-sm-margin-0" style="color: #c00000;">Rite Software</h1>
+      <h2 class="oj-typography-heading-lg oj-typography-bold oj-sm-margin-2x-top oj-sm-margin-0">Welcome Back</h2>
+      <p class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-2x-top">Please enter your details to sign in.</p>
+    </div>
+
+    <oj-form-layout max-columns="1" direction="column" class="oj-sm-margin-6x-bottom" label-edge="inside">
+      <oj-input-text 
+        label-hint="Username" 
+        value="{{ $variables.username }}" 
+        required="true"
+        autocomplete="off"
+        class="oj-sm-margin-2x-bottom">
+      </oj-input-text>
+      
+      <oj-input-password 
+        label-hint="Password" 
+        required="true"
+        autocomplete="new-password">
+      </oj-input-password>
+    </oj-form-layout>
+
+    <div class="oj-flex oj-sm-flex-direction-column">
+      <oj-button class="oj-sm-12" chroming="callToAction" on-oj-action="[[$listeners.buttonAction]]">
+        <span>Log In</span>
+      </oj-button>
+    </div>
+
+  </div>
+</div>
