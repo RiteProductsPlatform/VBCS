@@ -1,0 +1,2 @@
+"use strict";define(["vb/action/actionChain","vb/action/actions","vb/action/actionUtils"],(ActionChain,Actions)=>{"use strict";return class extends ActionChain{async run(context,{eventMessage={}}){const{$application,$flow,$page}=context;await Actions.fireDataProviderEvent(context,{target:$page.variables.messagesADP,remove:{keys:[eventMessage.id]}})}};});
+//# sourceMappingURL=closeNotificationHandler.js.map

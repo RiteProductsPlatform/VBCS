@@ -1,0 +1,1 @@
+{"version":3,"names":["define"],"sources":["app-flow.js"],"sourcesContent":["define([], () => {\n  'use strict';\n\n  class AppModule {\n  }\n  \n  return AppModule;\n});\n"],"mappings":"aAAAA,MAAM,CAAC,EAAE,CAAE,IAAM,CACf,YAAY,CAKZ,MAHA,MAAgB,EACf,CAGH,CAAC,CAAC","ignoreList":[]}

@@ -1,0 +1,1 @@
+{"version":3,"names":["define"],"sources":["shell-page.js"],"sourcesContent":["define([], () => {\n  'use strict';\n\n  class PageModule {\n  }\n  \n  return PageModule;\n});\n"],"mappings":"aAAAA,MAAM,CAAC,EAAE,CAAE,IAAM,CACf,YAAY,CAKZ,MAHA,MAAiB,EAChB,CAGH,CAAC,CAAC","ignoreList":[]}

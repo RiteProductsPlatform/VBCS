@@ -1,0 +1,2 @@
+"use strict";define(["vb/action/actionChain","vb/action/actions","vb/action/actionUtils"],(ActionChain,Actions)=>{"use strict";return class extends ActionChain{async run(context){const{$application}=context,fireEventToggleDrawerResult=await Actions.fireEvent(context,{event:"application:toggleDrawer"})}};});
+//# sourceMappingURL=toggleDrawerHandler.js.map

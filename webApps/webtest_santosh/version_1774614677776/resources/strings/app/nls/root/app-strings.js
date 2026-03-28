@@ -1,0 +1,2 @@
+"use strict";define(function(){"use strict";return{app_title_navigation_drawer:"Application Navigation Drawer",app_footer_about_link:"About",app_footer_copyright:"Created with Visual Builder, Copyright \xA9 2024",app_sign_out:"Sign Out",app_theme:"Theme",app_theme_light:"Light",app_theme_dark:"Dark",app_theme_os:"OS"};});
+//# sourceMappingURL=app-strings.js.map

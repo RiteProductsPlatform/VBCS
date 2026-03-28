@@ -1,0 +1,2 @@
+"use strict";define(["vb/action/actionChain","vb/action/actions","vb/action/actionUtils"],(ActionChain,Actions)=>{"use strict";return class extends ActionChain{async run(context,{event,originalEvent,name="$variables.name"}){const{$page,$flow,$application,$constants,$variables}=context,toMainStart1=await Actions.navigateToPage(context,{page:"main-start-1",params:{name:$variables.name}})}};});
+//# sourceMappingURL=ButtonActionChain.js.map

@@ -1,0 +1,1 @@
+{"version":3,"names":["define"],"sources":["page-header-fragment.js"],"sourcesContent":["define([], () => {\n  'use strict';\n\n  class FragmentModule {\n  }\n  \n  return FragmentModule;\n});\n"],"mappings":"aAAAA,MAAM,CAAC,EAAE,CAAE,IAAM,CACf,YAAY,CAKZ,MAHA,MAAqB,EACpB,CAGH,CAAC,CAAC","ignoreList":[]}

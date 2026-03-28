@@ -1,0 +1,437 @@
+define('app-flow',[], () => {
+  'use strict';
+
+  class AppModule {
+  }
+  
+  return AppModule;
+});
+
+
+define('text!app-flow.json',[],function () { return '{"id":"webtest_santosh","description":"A new VB app","defaultPage":"shell","services":{},"translations":{"app":{"path":"./resources/strings/app/nls/app-strings"}},"events":{"changeTheme":{"payloadType":{"themeName":"string"},"description":"Theme to switch the application to. Possible values are \'dark\' to switch to dark theme, \'light\' to switch to the default light theme and \'os\' to switch to dark theme if OS has dark theme enabled"},"navigateToItem":{"payloadType":{"item":"string"},"description":"Event to configure navigation between items/tabs."},"toggleDrawer":{"description":"Event to toggle the drawer."}},"types":{"navigationItem":{"id":"string","name":"string","iconClass":"string"},"globalHeaderItem":{"id":"string","name":"string","iconClass":"string"},"avatarMenuItem":{"id":"string","name":"string","iconClass":"string"}},"variables":{"avatarItemsADP":{"type":"vb/ArrayDataProvider2","defaultValue":{"data":"{{ $variables.avatarItems }}","itemType":"avatarMenuItem"}},"currentTheme":{"type":"string","description":"Current UI theme used in the application"},"globalHeadersADP":{"type":"vb/ArrayDataProvider2","description":"The model describing the Global Applications headers","defaultValue":{"keyAttributes":"id","data":"{{ $variables.globalHeadersData }}","itemType":"navigationItem"}},"navigationADP":{"type":"vb/ArrayDataProvider2","description":"The model describing the flows in the app","defaultValue":{"keyAttributes":"id","data":"{{ $variables.navigationData }}","itemType":"navigationItem"}},"avatarItems":{"type":"avatarMenuItem[]","defaultValue":[{"name":"Sign Out","id":"signout","iconClass":"oj-ux-ico-logout"}]},"globalHeadersData":{"type":"globalHeaderItem[]","defaultValue":[{"name":"Example 1","id":"settings","iconClass":"oj-ux-ico-settings"},{"name":"Example 2","id":"like","iconClass":"oj-ux-ico-thumbs-up"},{"name":"Example 3","id":"bookmark","iconClass":"oj-ux-ico-bookmark-add"}]},"navigationData":{"type":"navigationItem[]","defaultValue":[]}},"eventListeners":{"vbResourceChanged":{"chains":[{"parameters":{"event":"{{ $event }}"},"chain":"resourceChangedHandler"}]},"vbEnter":{"chains":[{"parameters":{},"chain":"initCurrentTheme"}]},"changeTheme":{"chains":[{"parameters":{"event":"{{ $event }}","themeName":"{{ $event.themeName }}"},"chain":"themeChangeHandler"}]}},"userConfig":{"type":"vb/DefaultSecurityProvider","configuration":{"idcsInfo":"#{env.idcsInfo}#","url":"%{env.userProfileUrl}%","oauthUrl":"%{env.oauthUserProfileUrl}%"},"embedding":"deny"},"security":{},"imports":{"css":["/resources/css/app.css"]},"settings":{"formDataAccess":"resources/formData/{vbFormDataId}"},"constants":{"themeChangeUI":{"type":"string","defaultValue":"off"}},"@dt":{"applicationTemplateType":"redwood"},"configuration":{"profile":"%{env.profileId}%"}}';});
+
+define('chains/initCurrentTheme',[
+  'vb/action/actionChain',
+  'vb/action/actions',
+  'vb/action/actionUtils',
+], (
+  ActionChain,
+  Actions,
+  ActionUtils
+) => {
+  'use strict';
+
+  class initCurrentTheme extends ActionChain {
+
+    /**
+     * @param {Object} context
+     */
+    async run(context) {
+      const { $application } = context;
+      if ($application.constants.themeChangeUI === 'on') {
+        // data-vb-theme is added in index.html when the app is loaded
+        $application.variables.currentTheme = document.documentElement.getAttribute('data-vb-theme') || 'light';
+      }
+    }
+  }
+
+  return initCurrentTheme;
+});
+
+define('chains/resourceChangedHandler',[
+  'vb/action/actionChain',
+  'vb/action/actions',
+  'vb/action/actionUtils',
+], (
+  ActionChain,
+  Actions,
+  ActionUtils
+) => {
+  'use strict';
+
+  class resourceChangedHandler extends ActionChain {
+
+    /**
+      * Displays a notification message when application has been updated and needs to be refreshed.
+      * @param {Object} context
+      * @param {Object} params
+      * @param {{error: {detail: string}}} params.event
+      */
+    async run(context, { event = {} }) {
+      const { $application } = context;
+
+      await Actions.fireNotificationEvent(context, {
+        summary: event.error.detail,
+      });
+    }
+  }
+
+  return resourceChangedHandler;
+});
+define('chains/themeChangeHandler',[
+  'vb/action/actionChain',
+  'vb/action/actions',
+  'vb/action/actionUtils',
+], (
+  ActionChain,
+  Actions,
+  ActionUtils
+) => {
+  'use strict';
+
+  class themeChangeHandler extends ActionChain {
+    /**
+     * @param {Object} context
+     * @param {Object} params
+     * @param {string} params.themeName Name of the theme to switch to
+     */
+    async run(context, { themeName = 'light' }) {
+      const { $application } = context;
+      $application.variables.currentTheme = themeName;
+      // window.vbLoadTheme is added in index.html when the app is loaded
+      window.vbLoadTheme(themeName);
+    }
+  }
+
+  return themeChangeHandler;
+});
+
+define('chains/toggleDrawerHandler',[
+  'vb/action/actionChain',
+  'vb/action/actions',
+  'vb/action/actionUtils',
+], (
+  ActionChain,
+  Actions,
+  ActionUtils
+) => {
+  'use strict';
+
+  class toggleDrawerHandler extends ActionChain {
+
+    /**
+     * Toggles the navigation drawer for the page
+     * @param {Object} context
+     */
+    async run(context) {
+      const { $application } = context;
+
+      const fireEventToggleDrawerResult = await Actions.fireEvent(context, {
+        event: 'application:toggleDrawer',
+      });
+    }
+  }
+
+  return toggleDrawerHandler;
+});
+
+define('flows/main/main-flow',[], () => {
+  'use strict';
+
+  class FlowModule {
+  }
+  
+  return FlowModule;
+});
+
+
+define('text!flows/main/main-flow.json',[],function () { return '{"id":"main","description":"Flow main","defaultPage":"main-start","services":{},"types":{},"variables":{}}';});
+
+
+define('text!flows/main/pages/main-start-1-page.html',[],function () { return '<oj-vb-fragment id="page-header" bridge="[[vbBridge]]" name="page-header"> <oj-vb-fragment-param name="title" value="main start 1"></oj-vb-fragment-param> <template slot="actions"> </template> </oj-vb-fragment> <div class="oj-flex"> <div class="oj-flex-item oj-sm-12 oj-md-12"> <oj-bind-text value=\'[[ "Welcome, " + $page.input.username ]]\'></oj-bind-text> </div> </div> ';});
+
+define('flows/main/pages/main-start-1-page',[], () => {
+  'use strict';
+
+  class PageModule {
+  }
+  
+  return PageModule;
+});
+
+
+define('text!flows/main/pages/main-start-1-page.json',[],function () { return '{"title":"main start 1","description":"","variables":{},"metadata":{},"types":{},"eventListeners":{},"imports":{"components":{}}}';});
+
+define('flows/main/pages/main-start-page-chains/ButtonActionChain',[
+  'vb/action/actionChain',
+  'vb/action/actions',
+  'vb/action/actionUtils',
+], (
+  ActionChain,
+  Actions,
+  ActionUtils
+) => {
+  'use strict';
+
+  class ButtonActionChain extends ActionChain {
+
+    /**
+     * @param {Object} context
+     * @param {Object} params
+     * @param {object} params.event
+     * @param {any} params.originalEvent
+     * @param {string} params.name
+     */
+    async run(context, { event, originalEvent, name = '$variables.name' }) {
+      const { $page, $flow, $application, $constants, $variables } = context;
+
+      const toMainStart1 = await Actions.navigateToPage(context, {
+        page: 'main-start-1',
+  params: {
+    name: $variables.name
+  }
+      });
+    }
+  }
+
+  return ButtonActionChain;
+});
+
+
+define('text!flows/main/pages/main-start-page.html',[],function () { return '<oj-vb-fragment id="page-header" bridge="[[vbBridge]]" name="page-header"> <oj-vb-fragment-param name="title" value="main"></oj-vb-fragment-param> <template slot="actions"> </template> </oj-vb-fragment> <div class="oj-flex"> <h2 class="oj-header oj-flex-item oj-sm-12 oj-md-12">Login</h2> </div> <div class="oj-flex"> <oj-input-text label-hint="Username" class="oj-flex-item oj-sm-12 oj-md-6" value="{{ $variables.username }}"></oj-input-text> </div> <div class="oj-flex"> <oj-input-password label-hint="Password" class="oj-flex-item oj-sm-12 oj-md-6"></oj-input-password> </div> <div class="oj-flex"> <div class="oj-flex-item oj-sm-12 oj-md-2"> <oj-button label="Submit" on-oj-action="[[$listeners.buttonAction]]"></oj-button> </div> </div> ';});
+
+define('flows/main/pages/main-start-page',[], () => {
+  'use strict';
+
+  class PageModule {
+  }
+  
+  return PageModule;
+});
+
+
+define('text!flows/main/pages/main-start-page.json',[],function () { return '{"title":"main","description":"","variables":{"username":{"type":"string"}},"metadata":{},"types":{},"eventListeners":{"buttonAction":{"chains":[{"chain":"ButtonActionChain","parameters":{"event":"{{$event}}","originalEvent":"{{$event.detail.originalEvent}}"}}]}},"imports":{"components":{"oj-button":{"path":"ojs/ojbutton"},"oj-input-password":{"path":"ojs/ojinputtext"},"oj-input-text":{"path":"ojs/ojinputtext"}}}}';});
+
+
+define('text!fragments/page-header/page-header-fragment.html',[],function () { return ' <header role="banner" class="oj-sm-flex-initial vb-web-applayout-header oj-md-hide"> <div role="image" class="vb-web-applayout-header-image-stripe"></div> <div class="oj-flex-bar oj-sm-align-items-center vb-web-applayout-header-content"> <oj-bind-if test="[[ document.querySelector(\'oj-vb-fragment[name=\\\'shell-drawer\\\']\') ]]"> <div class="oj-flex-bar"> <oj-button on-oj-action="[[$listeners.toggleDrawer]]" chroming="borderless" display="icons"> <span slot="startIcon" class="oj-ux-ico-menu"></span> <span><oj-bind-text value="[[$application.translations.app.app_title_navigation_drawer]]"></oj-bind-text></span> </oj-button> </div> </oj-bind-if> <div class="vb-content-header oj-flex oj-sm-flex-items-initial oj-sm-padding-2x-horizontal oj-sm-align-items-center oj-md-hide oj-sm-flex-1"> <div class="oj-typography-body-lg oj-typography-semi-bold oj-sm-flex-1"> <oj-bind-text value="[[$variables.title]]"></oj-bind-text> </div> <oj-vb-fragment-slot name="actions" bridge="[[vbBridge]]"> </oj-vb-fragment-slot> </div> </div> </header> <div class="vb-content-header oj-flex oj-sm-flex-1 oj-sm-only-hide oj-sm-align-items-center"> <div role="image" class="vb-content-header-image-stripe"></div> <div class="oj-typography-body-lg oj-typography-semi-bold oj-sm-flex-1"> <oj-bind-text value="[[$variables.title]]"></oj-bind-text> </div> <oj-vb-fragment-slot name="actions" bridge="[[vbBridge]]"> </oj-vb-fragment-slot> </div>';});
+
+define('fragments/page-header/page-header-fragment',[], () => {
+  'use strict';
+
+  class FragmentModule {
+  }
+  
+  return FragmentModule;
+});
+
+
+define('text!fragments/page-header/page-header-fragment.json',[],function () { return '{"title":"","description":"","events":{},"eventListeners":{"toggleDrawer":{"chains":[{"chain":"application:toggleDrawerHandler"}]}},"imports":{"components":{"oj-button":{"path":"ojs/ojbutton"}}},"metadata":{},"types":{},"slots":{"actions":{"displayName":"Actions"}},"variables":{"title":{"type":"string","input":"fromCaller"}},"referenceable":"self"}';});
+
+define('fragments/shell-footer/chains/openAboutDialog',[
+  'vb/action/actionChain',
+  'vb/action/actions',
+  'vb/action/actionUtils',
+], (
+  ActionChain,
+  Actions,
+  ActionUtils
+) => {
+  'use strict';
+
+  class openAboutDialog extends ActionChain {
+
+    /**
+     * Opens About Dialog
+     * @param {Object} context
+     */
+    async run(context) {
+      const { $application } = context;
+
+      const callAboutDialogOpenResult = await Actions.callComponentMethod(context, {
+        selector: '#aboutDialog',
+        method: 'open',
+      });
+    }
+  }
+
+  return openAboutDialog;
+});
+
+
+define('text!fragments/shell-footer/shell-footer-fragment.html',[],function () { return '<footer class="vb-web-applayout-footer oj-flex oj-sm-flex-direction-column" role="contentinfo"> <div role="img" class="vb-web-applayout-footer-image-stripe"></div> <div class="vb-web-applayout-footer-content oj-contrast-marker"> <div class="oj-flex oj-typography-body-sm oj-sm-margin-2x-start"> <div class="oj-flex oj-flex-item oj-sm-flex-direction-column"> <a id="about" class="oj-text-color-primary oj-sm-margin-2x-bottom" href="#" on-click="[[$listeners.aboutClick]]"> <oj-bind-text value="[[ $application.translations.app.app_footer_about_link ]]"></oj-bind-text> </a> <a class="oj-text-color-primary"> <oj-bind-text value="[[ \'Footer Item 1\' ]]"></oj-bind-text> </a> </div> <div class="oj-flex oj-flex-item oj-sm-flex-direction-column"> <a class="oj-text-color-primary oj-sm-margin-2x-bottom"> <oj-bind-text value="[[ \'Footer Item 2\' ]]"></oj-bind-text> </a> <a class="oj-text-color-primary"> <oj-bind-text value="[[ \'Footer Item 3\' ]]"></oj-bind-text> </a> </div> </div> <div class="oj-flex oj-sm-margin-2x-top oj-text-color-secondary oj-typography-body-sm oj-sm-margin-2x-start"><oj-bind-text value="[[ $application.translations.app.app_footer_copyright ]]"></oj-bind-text></div> <oj-dialog id="aboutDialog" dialog-title="My Application" cancel-behavior="icon"> <div class="oj-flex oj-text-color-secondary oj-typography-body-sm"> <oj-bind-text value="[[ $application.translations.app.app_footer_copyright ]]"></oj-bind-text> </div> </oj-dialog> </div> </footer>';});
+
+define('fragments/shell-footer/shell-footer-fragment',[], () => {
+  'use strict';
+
+  class FragmentModule {
+  }
+  
+  return FragmentModule;
+});
+
+
+define('text!fragments/shell-footer/shell-footer-fragment.json',[],function () { return '{"title":"Shell Footer","eventListeners":{"aboutClick":{"chains":[{"chain":"openAboutDialog"}],"preventDefault":"true"}},"events":{},"imports":{"components":{"oj-dialog":{"path":"ojs/ojdialog"}},"css":["/resources/css/shell.css"]},"metadata":{},"types":{},"variables":{}}';});
+
+define('fragments/shell-header/chains/avatarMenuActionChain',[
+  'vb/action/actionChain',
+  'vb/action/actions',
+  'vb/action/actionUtils',
+], (
+  ActionChain,
+  Actions,
+  ActionUtils
+) => {
+  'use strict';
+
+  class avatarMenuActionChain extends ActionChain {
+
+    /**
+     * Action Chain to handle menu item selection in the Avatar menu 
+     * @param {Object} context
+     * @param {Object} params
+     * @param {any} params.menuId 
+     */
+    async run(context, { menuId }) {
+      const { $fragment, $application } = context;
+
+      // If one of the theme sub-menu item is selected, fire an application event to change the current theme
+      if (menuId?.startsWith('theme:')) {
+        await Actions.fireEvent(context, {
+          event: 'application:changeTheme',
+          payload: {
+            themeName: menuId.substring(6),
+          },
+        });
+      }
+      
+    }
+  }
+
+  return avatarMenuActionChain;
+});
+
+
+define('text!fragments/shell-header/shell-header-fragment.html',[],function () { return '<header role="banner" class="oj-sm-flex-initial vb-web-applayout-header oj-sm-only-hide"> <div class="oj-flex-bar oj-sm-align-items-center vb-web-applayout-header-content"> <div class="oj-flex-bar-middle oj-sm-margin-4x-horizontal oj-sm-align-items-center"> <span class="oj-typography-heading-lg oj-sm-margin-2x-end oj-icon-color-warning oj-ux-ico-box" title="Application Logo" alt="Application Logo"></span> <h1 class="oj-typography-body-md oj-typography-semi-bold" title="Application Name"> <oj-bind-text value="My Application"></oj-bind-text> </h1> </div> <div class="oj-flex-bar-end"> <oj-toolbar id="toolbar1"> <oj-bind-for-each data="[[$application.variables.globalHeadersADP]]"> <template> <div> <oj-button display="icons" label="[[ $current.data.name ]]"> <span :class="[[$current.data.iconClass]]" slot="startIcon"></span> </oj-button> </div> </template> </oj-bind-for-each> <oj-menu-button display="icons" chroming="borderless"> <span id="header-avatar" slot="endIcon" role="img" class="oj-ux-ico-contact" :aria-label="[[$application.user.fullName]]" :title="[[$application.user.fullName]]"> </span> <oj-menu id="header-avatar-menu" slot="menu" role="navigation" on-oj-menu-action="[[$listeners.avatarMenuAction]]"> <oj-bind-if test="[[ $application.constants.themeChangeUI === \'on\' ]]"> <oj-option> <span slot="startIcon" class="oj-ux-ico-theme"></span> <span><oj-bind-text value="[[$application.translations.app.app_theme]]"></oj-bind-text></span> <oj-menu> <oj-option value="theme:light"> <span class="oj-menu-item-icon" :class="[[{ \'oj-ux-ico-check\': ($application.variables.currentTheme === \'light\') }]]" slot="startIcon"> </span> <span slot="startIcon" class="oj-ux-ico-weather-sun"></span> <span><oj-bind-text value="[[$application.translations.app.app_theme_light]]"></oj-bind-text></span> </oj-option> <oj-option value="theme:dark"> <span class="oj-menu-item-icon" :class="[[{ \'oj-ux-ico-check\': ($application.variables.currentTheme === \'dark\') }]]" slot="startIcon"> </span> <span slot="startIcon" class="oj-ux-ico-weather-moon"></span> <span><oj-bind-text value="[[$application.translations.app.app_theme_dark]]"></oj-bind-text></span> </oj-option> <oj-option value="theme:os"> <span class="oj-menu-item-icon" :class="[[{ \'oj-ux-ico-check\': ($application.variables.currentTheme === \'os\') }]]" slot="startIcon"> </span> <span slot="startIcon" class="oj-ux-ico-circle-half"></span> <span><oj-bind-text value="[[$application.translations.app.app_theme_os]]"></oj-bind-text></span> </oj-option> </oj-menu> </oj-option> </oj-bind-if> <oj-bind-for-each data="[[$application.variables.avatarItems]]"> <template> <oj-option> <span :class="[[ $current.data.iconClass ]]" slot="startIcon"></span> <oj-bind-text value="[[ $current.data.name ]]"></oj-bind-text> </oj-option> </template> </oj-bind-for-each> </oj-menu> </oj-menu-button> </oj-toolbar> </div> </div> </header>';});
+
+define('fragments/shell-header/shell-header-fragment',[], () => {
+  'use strict';
+
+  class FragmentModule {
+  }
+  
+  return FragmentModule;
+});
+
+
+define('text!fragments/shell-header/shell-header-fragment.json',[],function () { return '{"title":"Shell Header","eventListeners":{"avatarMenuAction":{"chains":[{"chain":"avatarMenuActionChain","parameters":{"menuId":"[[ $event.detail.selectedValue ]]"}}]}},"events":{},"imports":{"components":{"oj-avatar":{"path":"ojs/ojavatar"},"oj-button":{"path":"ojs/ojbutton"},"oj-menu":{"path":"ojs/ojmenu"},"oj-menu-button":{"path":"ojs/ojbutton"},"oj-option":{"path":"ojs/ojoption"},"oj-popup":{"path":"ojs/ojpopup"},"oj-toolbar":{"path":"ojs/ojtoolbar"}},"css":["/resources/css/shell.css"]},"metadata":{},"types":{},"variables":{}}';});
+
+define('pages/shell-page-chains/closeNotificationHandler',[
+  'vb/action/actionChain',
+  'vb/action/actions',
+  'vb/action/actionUtils',
+], (
+  ActionChain,
+  Actions,
+  ActionUtils
+) => {
+  'use strict';
+
+  class closeNotificationHandler extends ActionChain {
+
+    /**
+     * Removes the notification message when its dismiss gesture has been invoked.
+     * @param {Object} context
+     * @param {Object} params
+     * @param {messageType} params.eventMessage 
+     */
+    async run(context, { eventMessage = {} }) {
+      const { $application, $flow, $page } = context;
+
+      await Actions.fireDataProviderEvent(context, {
+        target: $page.variables.messagesADP,
+        remove: {
+          keys: [eventMessage.id],
+        },
+      });
+    }
+  }
+
+  return closeNotificationHandler;
+});
+
+define('pages/shell-page-chains/showNotification',[
+  'vb/action/actionChain',
+  'vb/action/actions',
+  'vb/action/actionUtils',
+], (
+  ActionChain,
+  Actions,
+  ActionUtils
+) => {
+  'use strict';
+
+  class showNotification extends ActionChain {
+
+    /**
+     * Displays notifications sent by the Fire Notification action using the oj-messages component on this page.
+     * @param {Object} context
+     * @param {Object} params
+     * @param {messageType} params.eventPayload 
+     */
+    async run(context, { eventPayload = {} }) {
+      const { $application, $flow, $page } = context;
+
+      await Actions.fireDataProviderEvent(context, {
+        target: $page.variables.messagesADP,
+        add: {
+          data: [eventPayload],
+        },
+      });
+    }
+  }
+
+  return showNotification;
+});
+
+
+define('text!pages/shell-page.html',[],function () { return '<div id="pageContent" class="oj-flex oj-sm-flex-direction-column oj-sm-flex-wrap-nowrap vb-web-applayout-page fixed-header"> <oj-vb-fragment id="shell-header" bridge="[[vbBridge]]" name="shell-header"> </oj-vb-fragment> <oj-messages id="vbDefaultNotifier" display-options.category="none" position="{}" display="general" messages="[[$page.variables.messagesADP]]" on-oj-close="[[$listeners.onMessageClose]]"></oj-messages> <div class="vb-content-and-footer-container oj-flex oj-sm-flex-direction-column oj-sm-flex-1 oj-sm-flex-wrap-nowrap"> <oj-vb-content id="vbRouterContent" class="vb-pages-module oj-flex-item oj-flex" config="[[vbRouterFlow]]"> </oj-vb-content> <oj-vb-fragment id="shell-footer" bridge="[[vbBridge]]" name="shell-footer"> </oj-vb-fragment> </div> </div> ';});
+
+define('pages/shell-page',[], () => {
+  'use strict';
+
+  class PageModule {
+  }
+  
+  return PageModule;
+});
+
+
+define('text!pages/shell-page.json',[],function () { return '{"description":"","routerFlow":"main","variables":{"messagesADP":{"type":"vb/ArrayDataProvider2","defaultValue":{"keyAttributes":"id","itemType":"page:messageType"}}},"metadata":{},"types":{"messageType":{"id":"string","severity":"string","category":"string","summary":"string","detail":"string","timestamp":"string","autoTimeout":"number"}},"eventListeners":{"vbNotification":{"chains":[{"chain":"showNotification","parameters":{"eventPayload":"{{ { id: $event.key, summary: $event.summary, detail: $event.message, severity: $event.type, autoTimeout: $event.displayMode === \'transient\' ? 0 : -1 } }}"}}]},"onMessageClose":{"chains":[{"chain":"closeNotificationHandler","parameters":{"eventMessage":"{{ $event.detail.message }}"}}]}},"imports":{"components":{"oj-messages":{"path":"ojs/ojmessages"}},"css":["/resources/css/shell.css"]},"translations":{}}';});
+
+
+define('text!resources/css/app.css',[],function () { return '';});
+
+
+define('text!resources/css/shell.css',[],function () { return '.vb-web-applayout-body{overflow-y:hidden}.vb-web-applayout-page{position:relative;min-height:calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));max-height:calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))}.vb-web-applayout-page.fixed-header{padding-top:calc(3.25rem + env(safe-area-inset-top))}.vb-web-applayout-page.fixed-header .vb-web-applayout-header{position:fixed;width:100%;top:0;left:0}.vb-web-applayout-header{background-color:rgb(var(--oj-palette-neutral-rgb-10));border-bottom:1px solid var(--oj-private-app-layout-web-header-border-color);z-index:1;box-shadow:var(--oj-private-app-layout-web-header-box-shadow)}.vb-content-and-footer-container{position:relative;overflow-y:auto}.vb-pages-module{padding-left:calc(var(--oj-core-spacing-10x) + var(--oj-core-spacing-4x));padding-right:var(--oj-core-spacing-10x);position:relative;width:100%}.vb-pages-module>.oj-complete{flex-direction:column;width:100%;flex-wrap:nowrap!important}.vb-web-applayout-footer-image-stripe{height:8px;content:\'\';background:url(../images/footer-stripe.png);background-position:left bottom;background-repeat:repeat-x;background-size:100% 100%}.vb-web-applayout-footer-content{background-color:rgb(var(--oj-palette-neutral-rgb-170));padding-top:var(--oj-core-spacing-4x);padding-bottom:var(--oj-core-spacing-4x)}.vb-web-applayout-footer-content,.vb-web-applayout-header-content{padding-left:var(--oj-core-spacing-10x);padding-right:var(--oj-core-spacing-10x)}@media screen and (min-width:600px){.vb-web-applayout-header{background-color:rgb(var(--oj-palette-neutral-rgb-30))}.vb-content-header{min-height:7.875rem;max-height:7.875rem;margin-bottom:12px}.vb-content-header-image-stripe{top:7.875rem;left:0;position:absolute;width:100%;height:12px;content:\'\';z-index:1;background:url(../images/header-stripe-desktop.png);background-position:left bottom;background-repeat:repeat-x;background-size:100% 100%}}@media screen and (orientation:landscape){.vb-web-applayout-page{min-height:100vh}}@media screen and (max-width:599.9px){.vb-web-applayout-page.fixed-header{padding-top:calc(3.5rem + 6px + env(safe-area-inset-top))}.vb-web-applayout-header{padding-bottom:6px}.vb-web-applayout-header-image-stripe{position:absolute;width:100%;height:6px;content:\'\';z-index:1;left:0;bottom:0;background:url(../images/header-stripe-phone.png);background-position:left bottom;background-repeat:repeat-x;background-size:100% 100%}.vb-web-applayout-header-content{padding-left:var(--oj-core-spacing-2x);padding-right:var(--oj-core-spacing-2x);height:3.5rem}.vb-web-applayout-footer-content{padding-left:var(--oj-core-spacing-3x)}.vb-pages-module{padding-left:var(--oj-core-spacing-4x)}.vb-web-applayout-footer-image-stripe{height:6px}.vb-web-applayout-footer-content{padding-bottom:calc(var(--oj-core-spacing-4x) + env(safe-area-inset-bottom))}}#page-header{margin-bottom:var(--oj-core-spacing-12x);display:block}.vb-dark-theme .vb-web-applayout-footer-content{--oj-core-text-color-primary:unset;--oj-core-text-color-secondary:unset;--oj-core-text-color-disabled:unset;--oj-core-bg-color-content:unset;--oj-core-bg-color-hover:unset;--oj-core-bg-color-active:unset;--oj-core-divider-color:unset;--oj-core-neutral-1:unset;--oj-core-neutral-2:unset;--oj-core-neutral-3:unset;--oj-core-neutral-contrast:unset;--oj-core-neutral-secondary-1:unset;--oj-core-neutral-secondary-2:unset;--oj-core-neutral-secondary-3:unset;--oj-core-neutral-secondary-contrast:unset;--oj-core-color-disabled-2:unset;--oj-core-focus-border-color:unset;--oj-button-solid-chrome-text-color:unset;--oj-button-solid-chrome-bg-color-hover:unset;--oj-button-solid-chrome-bg-color-active:unset;--oj-button-solid-chrome-bg-color-disabled:unset;--oj-button-solid-chrome-bg-color:unset;--oj-button-solid-chrome-text-color-hover:unset;--oj-button-solid-chrome-bg-color-selected:unset;--oj-button-solid-chrome-bg-color-selected-hover:unset;--oj-button-solid-chrome-text-color-selected-hover:unset;--oj-button-solid-chrome-bg-color-selected-disabled:unset;--oj-button-solid-chrome-text-color-selected-disabled:unset;--oj-button-outlined-chrome-border-color:unset;--oj-button-outlined-chrome-border-color-hover:unset;--oj-button-outlined-chrome-border-color-active:unset;--oj-button-outlined-chrome-border-color-selected:unset;--oj-button-outlined-chrome-border-color-selected-hover:unset;--oj-button-outlined-chrome-border-color-selected-disabled:unset;--oj-button-borderless-chrome-border-color-selected:unset;--oj-button-call-to-action-chrome-bg-color:unset;--oj-button-call-to-action-chrome-text-color:unset;--oj-button-call-to-action-chrome-bg-color-hover:unset;--oj-button-call-to-action-chrome-text-color-hover:unset;--oj-button-call-to-action-chrome-bg-color-active:unset;--oj-button-call-to-action-chrome-text-color-active:unset;background-color:rgb(var(--oj-palette-neutral-rgb-0));background-blend-mode:soft-light}';});
+
+define('resources/strings/app/nls/app-strings',[],function() {
+ 'use strict';
+
+ return {
+    "root": true
+};
+});
+define('resources/strings/app/nls/root/app-strings',[],function() {
+ 'use strict';
+
+ return {
+    "app_title_navigation_drawer": "Application Navigation Drawer",
+    "app_footer_about_link": "About",
+    "app_footer_copyright": "Created with Visual Builder, Copyright © 2024",
+    "app_sign_out": "Sign Out",
+    "app_theme": "Theme",
+    "app_theme_light": "Light",
+    "app_theme_dark": "Dark",
+    "app_theme_os": "OS"
+};
+});
+
+define('text!services/catalog.json',[],function () { return '"#{env.catalogJson}#"';});
+
+
+define('text!settings/dependencies.json',[],function () { return '{"component-dependencies":{}}';});
+
+
+define("bundles/vb-app-bundle", function(){});
+
+//# sourceMappingURL=vb-app-bundle.js.map

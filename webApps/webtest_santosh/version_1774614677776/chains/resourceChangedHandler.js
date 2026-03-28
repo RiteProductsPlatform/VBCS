@@ -1,0 +1,2 @@
+"use strict";define(["vb/action/actionChain","vb/action/actions","vb/action/actionUtils"],(ActionChain,Actions)=>{"use strict";return class extends ActionChain{async run(context,{event={}}){const{$application}=context;await Actions.fireNotificationEvent(context,{summary:event.error.detail})}};});
+//# sourceMappingURL=resourceChangedHandler.js.map

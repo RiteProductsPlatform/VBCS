@@ -1,0 +1,2 @@
+"use strict";define(["vb/action/actionChain","vb/action/actions","vb/action/actionUtils"],ActionChain=>{"use strict";return class extends ActionChain{async run(context,{themeName="light"}){const{$application}=context;$application.variables.currentTheme=themeName,window.vbLoadTheme(themeName)}};});
+//# sourceMappingURL=themeChangeHandler.js.map
